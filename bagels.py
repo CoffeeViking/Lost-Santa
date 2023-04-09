@@ -30,10 +30,10 @@ For example, if the secret number is 248 and you guess 843, the clues would be F
             while len(guess) != NUM_DIGITS:
                 print('Guess #{}: '.format(numGuesses))
                 guess = list(input('> '))
-                for i in guess:
-                    if i > 'j':
-                        print('Guess #{}: '.format(numGuesses))
-                        guess = list(input('> '))
+            for i in guess:
+                if i > 'j':
+                    print('Guess #{}: '.format(numGuesses))
+                    guess = list(input('> '))
 
             clues = getClues(guess, secretNum)
             print(clues)
