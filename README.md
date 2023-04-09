@@ -1,3 +1,2 @@
 # Lost-Santa
-
-My binary to decimal script
+Dump for miscellaneous projects
