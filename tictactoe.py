@@ -1,7 +1,9 @@
+# Creates Game Board
 theBoard = {'top-L': ' ', 'top-M': ' ', 'top-R': ' ',
            'mid-L': ' ', 'mid-M': ' ', 'mid-R': ' ',
            'bot-L': ' ', 'bot-M': ' ', 'bot-R': ' '}
 
+# Function Draws Game Board to Console
 def printBoard(board):
     print(board['top-L'] + '|' + board['top-M'] + '|' + board['top-R'])
     print('-+-+-')
@@ -9,6 +11,7 @@ def printBoard(board):
     print('-+-+-')
     print(board['bot-L'] + '|' + board['bot-M'] + '|' + board['bot-R'])
 
+# Function checks for a winner
 def checkForWin(turn):
     # Top Row
     if theBoard['top-L'] == turn and theBoard['top-M'] == turn and theBoard['top-R'] == turn:
@@ -51,7 +54,7 @@ def checkForWin(turn):
         print(turn + ' is the winner! WHOO!')
         quit()
     
-###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
+###~~~~~~~PROGRAM~~~~~~~~###
 
 turn = 'X'
 for i in range(9):
