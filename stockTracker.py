@@ -1,5 +1,6 @@
 from tkinter import messagebox
 from tkinter import *
+import pickle
 
 # Starts dictionary to store information
 currentStock = {1234567890: {"stock": 0, "name": "ScottyPoop", "size": "12 oz", "msrp": "$3.99"}                
@@ -74,6 +75,23 @@ def remove():
         currentStock[bcode]["stock"] -= 1
         messagebox.showinfo(title='Product Removed!', message='You now have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]))
 
+# Function to Load Dictionary
+def load():
+    if 'stock.yeet':
+        myFile = open('stock.yeet', 'rb')
+        global currentStock
+        currentStock = pickle.load(myFile)
+        myFile.close()
+    else:
+        messagebox.showinfo(title='No Saved Database', message='Sorry, there is no existing database!')
+
+#Function to Save Dictionary
+def save():
+    if 'stock.yeet':
+        myFile = open('stock.yeet', 'wb')
+        pickle.dump(currentStock, myFile)
+        myFile.close()
+        
 # Define a User Interface
 stockTracker = Tk()
 stockTracker.geometry("700x400")
@@ -109,6 +127,11 @@ r2.place(x=318, y=45)
 r3 = Radiobutton(stockTracker,text='Remove', variable=rad, value='remove', indicator=0, command=print_selection)
 r3.place(x=361, y=45)
 
+# Radio Buttons For Load/Save
+r4 = Radiobutton(stockTracker, text='Load',  indicator=0,command=load)
+r4.place(x=50, y=45)
+r5 = Radiobutton(stockTracker, text='Save', indicator=0, command=save)
+r5.place(x=65, y=45)
 #Get Barcode From User
 bcode_label = Label(stockTracker, text='Please enter a barcode number!')
 bcode_label.place(x=50, y=75)
