@@ -1,5 +1,7 @@
 from tkinter import messagebox
 from tkinter import *
+import pickle
+import os.path
 
 # Starts dictionary to store information
 currentStock = {1234567890: {"stock": 0, "name": "ScottyPoop", "size": "12 oz", "msrp": "$3.99"}                
@@ -7,7 +9,10 @@ currentStock = {1234567890: {"stock": 0, "name": "ScottyPoop", "size": "12 oz", 
 
 # Function to print selection to window
 def print_selection():
-    l.config(text = 'You have selected to ' + rad.get())
+    if rad == '':
+        l.config(text='Make a selection!')
+    else:
+        l.config(text = 'You have selected to ' + rad.get())
 
 # Function to check bcode for invalid characters, routes to proper function
 def go():
@@ -41,7 +46,7 @@ def add():
         updateButt.place(x=50, y= 260)
     else:
         currentStock[bcode]["stock"] += 1
-        messagebox.showinfo(title='Product Added!', message='You have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]))
+        l.config(text='Product Added!', message='You have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]))
 
 # Function to add new Item to Dictionary
 def updateD(bcode, name, size, msrp):
@@ -51,28 +56,65 @@ def updateD(bcode, name, size, msrp):
     nFound_label.place_forget()
     name_label.place_forget()
     name_entry.place_forget()
+    name_entry.delete(0, 'end')
     size_label.place_forget()
     size_entry.place_forget()
+    size_entry.delete(0, 'end')
     msrp_label.place_forget()
     msrp_entry.place_forget()
+    msrp_entry.delete(0, 'end')
     updateButt.place_forget()
-    
+    bcode_entry.delete(0, 'end')
 # Function to Check Item in Inv
 def check():
     if bcode not in currentStock:
         messagebox.showinfo(title='Not found!', message='Sorry, I couldnt find this item!')
+        bcode_entry.delete(0, 'end')
     else:
-        messagebox.showinfo(title='Stock Check!', message='You have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]) + '!')
-        
+        l.config(text='You have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]) + '!')
+        bcode_entry.delete(0, 'end')
 # Function to Remove Item from Inv
 def remove():
     if bcode not in currentStock:
         messagebox.showerror(message="Sorry, this isn't in my system!")
+        bcode_entry.delete(0, 'end')
     if currentStock[bcode]["stock"] == 0:
         messagebox.showerror(title='None Found!', message='Sorry, you already dont have any ' + currentStock[bcode]["name"] + '!')
+        bcode_entry.delete(0, 'end')
     else:
         currentStock[bcode]["stock"] -= 1
-        messagebox.showinfo(title='Product Removed!', message='You now have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]))
+        l.config(text='You now have ' + str(currentStock[bcode]["stock"]) + ' ' + str(currentStock[bcode]["name"]))
+        bcode_entry.delete(0, 'end')
+
+# Function to Load Dictionary
+def load():
+    if os.path.exists('stock.yeet'):
+        myFile = open('stock.yeet', 'rb')
+        global currentStock
+        currentStock = pickle.load(myFile)
+        myFile.close()
+        l.config(text="Load Successful!")
+        stockTracker.after(2000, print_selection)
+    else:
+        messagebox.showinfo(title='No Saved Database', message='Sorry, there is no existing database!')
+
+#Function to Save Dictionary
+def save():
+    if os.path.exists('stock.yeet'):
+        myFile = open('stock.yeet', 'wb')
+        pickle.dump(currentStock, myFile)
+        myFile.close()
+        l.config(text='Saved Successfully!')
+        stockTracker.after(2000, print_selection)
+    else:
+        answer = messagebox.askokcancel(title='File Not Found', message='No stock.yeet found, Create a new one?')
+        if answer:
+            myFile = open('stock.yeet', 'wb')
+            pickle.dump(currentStock, myFile)
+            myFile.close()
+            l.config(text="Saved Successfully!")
+            stockTracker.after(2000, print_selection)
+
 
 # Define a User Interface
 stockTracker = Tk()
@@ -96,8 +138,8 @@ updateButt = Button(stockTracker, text="Update!", command= lambda: updateD(bcode
 title_label = Label(stockTracker, text = "Earl's Stock Tracker!")
 title_label.pack()
 
-#Temp Readout For Button Test
-l = Label(stockTracker, bg='white', width=22, text='empty')
+#Create Display for Information
+l = Label(stockTracker, bg='white', width=22, text='Make a selection!')
 l.pack()
 
 #Radio Buttons
@@ -108,6 +150,14 @@ r2 = Radiobutton(stockTracker, text='Check', variable=rad, value='check', indica
 r2.place(x=318, y=45)
 r3 = Radiobutton(stockTracker,text='Remove', variable=rad, value='remove', indicator=0, command=print_selection)
 r3.place(x=361, y=45)
+rDummy = Radiobutton(stockTracker, text='None', variable=rad, value='', indicator=0, command = print_selection)
+rDummy.place(x= -100, y=-100)
+
+# Radio Buttons For Load/Save
+r4 = Button(stockTracker, text='Load', command=load)
+r4.place(x=50, y=45)
+r5 = Button(stockTracker, text='Save', command=save)
+r5.place(x=87, y=45)
 
 #Get Barcode From User
 bcode_label = Label(stockTracker, text='Please enter a barcode number!')
